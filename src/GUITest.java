@@ -206,12 +206,13 @@ public class GUITest extends JFrame {
 
     }
 
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         GUITest guiTest = new GUITest();
         guiTest.GUIFrame();
         //jFrame.paint(g);
 
     }
+    */
 
     public void paint(Graphics g)
     {
