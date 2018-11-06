@@ -24,6 +24,7 @@ public class PaintTest extends JComponent {
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //f.setSize(250,250);
         f.add(new MyPanel());
+        //f.add(new MyListener());
         f.pack();
         f.setVisible(true);
     }
@@ -31,11 +32,7 @@ public class PaintTest extends JComponent {
 class MyPanel extends JPanel {
 
     RedSquare redSquare = new RedSquare();
-
-    /*private int squareX = 50;
-    private int squareY = 50;
-    private int squareW = 20;
-    private int squareH = 20;*/
+    RedSquare slidingSquare = new RedSquare();
 
     public MyPanel() {
         setBorder(BorderFactory.createLineBorder(Color.black));
@@ -53,6 +50,24 @@ class MyPanel extends JPanel {
         });
     }
 
+
+    public void slideSquare(int moveX, int y){
+        int moveHorizontal = moveX;
+        int moveVertical = y;
+        final int CURR_X = slidingSquare.getX();
+        final int CURR_Y = slidingSquare.getY();
+        final int CURR_W = slidingSquare.getWidth();
+        final int CURR_H = slidingSquare.getHeight();
+        final int OFFSET = 1;
+        System.out.println("?");
+        repaint(CURR_X,CURR_Y,CURR_W+OFFSET,CURR_H+OFFSET);
+
+        slidingSquare.setX(CURR_X+moveHorizontal);
+        slidingSquare.setY(CURR_Y+moveVertical);
+
+        repaint(CURR_X,CURR_Y,CURR_W+OFFSET,CURR_H+OFFSET);
+
+    }
 
     private void moveSquare(int x, int y){
 
@@ -126,38 +141,13 @@ class RedSquare{
         g.drawRect(xPos,yPos,width,height);
     }
 }
+
 class MyListener extends JPanel implements ActionListener{
-    RedSquare slidingSquare = new RedSquare();
     @Override
     public void actionPerformed(ActionEvent e) {
 
         System.out.println("The timer is working");
-        slideSquare(5,0);
+        //f.slideSquare(5,0);
 
-    }
-    public void slideSquare(int moveX, int y){
-        int moveHorizontal = moveX;
-        int moveVertical = y;
-        final int CURR_X = slidingSquare.getX();
-        final int CURR_Y = slidingSquare.getY();
-        final int CURR_W = slidingSquare.getWidth();
-        final int CURR_H = slidingSquare.getHeight();
-        final int OFFSET = 1;
-
-        repaint(CURR_X,CURR_Y,CURR_W+OFFSET,CURR_H+OFFSET);
-
-        slidingSquare.setX(CURR_X+moveHorizontal);
-        slidingSquare.setY(CURR_Y+moveVertical);
-
-        repaint(CURR_X,CURR_Y,CURR_W+OFFSET,CURR_H+OFFSET);
-
-    }
-    public void paintComponent(Graphics g){
-        super.paintComponent(g);
-
-        //Draw Text
-        g.drawString("This is my custom Panel",10,20);
-
-        slidingSquare.paintSquare(g);
     }
 }
