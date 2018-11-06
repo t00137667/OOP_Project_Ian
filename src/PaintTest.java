@@ -132,11 +132,11 @@ class MyListener extends JPanel implements ActionListener{
     public void actionPerformed(ActionEvent e) {
 
         System.out.println("The timer is working");
-        slideSquare(slidingSquare.getX(),slidingSquare.getY());
+        slideSquare(5,0);
 
     }
-    public void slideSquare(int x, int y){
-        int moveHorizontal = x;
+    public void slideSquare(int moveX, int y){
+        int moveHorizontal = moveX;
         int moveVertical = y;
         final int CURR_X = slidingSquare.getX();
         final int CURR_Y = slidingSquare.getY();
