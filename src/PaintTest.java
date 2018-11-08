@@ -11,8 +11,6 @@ public class PaintTest extends JComponent {
             @Override
             public void run() {
                 createAndShowGUI();
-                Timer t = new Timer(500,new MyListener());
-                t.start();
             }
         });
     }
@@ -22,17 +20,16 @@ public class PaintTest extends JComponent {
                 SwingUtilities.isEventDispatchThread());
         JFrame f = new JFrame("Paint Test");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        //f.setSize(250,250);
         f.add(new MyPanel());
-        //f.add(new MyListener());
         f.pack();
         f.setVisible(true);
     }
 }
-class MyPanel extends JPanel {
+class MyPanel extends JPanel implements ActionListener{
 
     RedSquare redSquare = new RedSquare();
-    RedSquare slidingSquare = new RedSquare();
+
+    Timer t = new Timer(100,this);
 
     public MyPanel() {
         setBorder(BorderFactory.createLineBorder(Color.black));
@@ -48,24 +45,33 @@ class MyPanel extends JPanel {
                 moveSquare(e.getX(), e.getY());
             }
         });
+
+        t.start();
     }
 
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        System.out.println("The timer is working");
+        slideSquare(5,0);
+
+    }
 
     public void slideSquare(int moveX, int y){
         int moveHorizontal = moveX;
         int moveVertical = y;
-        final int CURR_X = slidingSquare.getX();
-        final int CURR_Y = slidingSquare.getY();
-        final int CURR_W = slidingSquare.getWidth();
-        final int CURR_H = slidingSquare.getHeight();
+        final int posX = redSquare.getX();
+        final int posY = redSquare.getY();
+        final int width = redSquare.getWidth();
+        final int height = redSquare.getHeight();
         final int OFFSET = 1;
         System.out.println("?");
-        repaint(CURR_X,CURR_Y,CURR_W+OFFSET,CURR_H+OFFSET);
+        repaint(posX,posY,width+OFFSET,height+OFFSET);
+        System.out.println(posX);
+        redSquare.setX(posX+moveHorizontal);
+        System.out.println(posX);
+        redSquare.setY(posY+moveVertical);
 
-        slidingSquare.setX(CURR_X+moveHorizontal);
-        slidingSquare.setY(CURR_Y+moveVertical);
-
-        repaint(CURR_X,CURR_Y,CURR_W+OFFSET,CURR_H+OFFSET);
+        repaint();
 
     }
 
@@ -139,15 +145,5 @@ class RedSquare{
         g.fillRect(xPos,yPos,width,height);
         g.setColor(Color.BLACK);
         g.drawRect(xPos,yPos,width,height);
-    }
-}
-
-class MyListener extends JPanel implements ActionListener{
-    @Override
-    public void actionPerformed(ActionEvent e) {
-
-        System.out.println("The timer is working");
-        //f.slideSquare(5,0);
-
     }
 }
