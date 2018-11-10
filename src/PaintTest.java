@@ -1,19 +1,22 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
 
-//This file is a copy of a tutorial form the Oracle website.
+//This file was a copy of a tutorial form the Oracle website.
+//It is heavily modified from the original.
 //It was used to gain a better understanding of the paintComponent method.
 
 public class PaintTest extends JComponent {
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable(){
             @Override
             public void run() {
                 createAndShowGUI();
             }
         });
-    }
+    }*/
 
     private static void createAndShowGUI(){
         System.out.println("Created GUI on EDT? " +
@@ -21,6 +24,7 @@ public class PaintTest extends JComponent {
         JFrame f = new JFrame("Paint Test");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.add(new MyPanel());
+        //f.setBackground(Color.black);
         f.pack();
         f.setVisible(true);
     }
@@ -28,11 +32,27 @@ public class PaintTest extends JComponent {
 class MyPanel extends JPanel implements ActionListener{
 
     RedSquare redSquare = new RedSquare();
-
+    //Background blackBackGround = new Background();
+    Image myPicture;
     Timer t = new Timer(100,this);
 
     public MyPanel() {
         setBorder(BorderFactory.createLineBorder(Color.black));
+        //setBackground(Color.black);
+
+        try {
+            myPicture = ImageIO.read(getClass().getResource("skybox/1.png"));
+            System.out.println("Image read");
+            //JLabel picLabel = new JLabel(new ImageIcon(myPicture));
+            //add(picLabel);
+
+        } catch (IOException ex) {
+            System.out.println("Error in read, exiting.");
+            System.exit(0);
+        }
+
+
+
 
         addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
@@ -107,7 +127,7 @@ class MyPanel extends JPanel implements ActionListener{
 
     public void paintComponent(Graphics g){
         super.paintComponent(g);
-
+        g.drawImage(myPicture,0,0,null);
         //Draw Text
         g.drawString("This is my custom Panel",10,20);
 
