@@ -61,8 +61,6 @@ class GamePanel extends JPanel implements ActionListener {
         }
 
         gameTimer.start();
-
-
     }
 
 
