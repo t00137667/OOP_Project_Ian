@@ -6,7 +6,7 @@ import java.io.IOException;
 public class PlayerShip {
     public BufferedImage playerShipImage;
 
-    //Initial Positioning
+    //Initial Positioning (Center of bottom-ish)
     private int xPos = 480;
     private int yPos = 750;
     private int width = 62;

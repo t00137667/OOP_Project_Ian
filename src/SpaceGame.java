@@ -21,7 +21,7 @@ public class SpaceGame extends JComponent {
 
 }
 
-class GamePanel extends JPanel implements ActionListener, KeyListener {
+class GamePanel extends JPanel implements ActionListener {
 
 
     Timer gameTimer = new Timer(10,this);
@@ -29,6 +29,8 @@ class GamePanel extends JPanel implements ActionListener, KeyListener {
     PlayerShip playerShip = new PlayerShip();
     int xDirection = 0;
     int yDirection = 0;
+    boolean isAPressed = false;
+    boolean isDPressed = false;
 
     GamePanel(){
         //Adding a border to the panel
@@ -37,14 +39,13 @@ class GamePanel extends JPanel implements ActionListener, KeyListener {
 
         addKeyListener(new KeyAdapter() {
             public void keyPressed (KeyEvent e){
-                direction(e);
+                input(e);
             }
         });
 
         addKeyListener(new KeyAdapter() {
             public void keyReleased (KeyEvent e){
-                xDirection = 0;
-                yDirection = 0;
+                inputStop(e);
             }
         });
 
@@ -63,19 +64,55 @@ class GamePanel extends JPanel implements ActionListener, KeyListener {
 
 
     }
-    @Override
-    public void keyTyped (KeyEvent e){
-        //direction(e);
-    }
-    @Override
-    public void keyPressed (KeyEvent e){
-        direction(e);
-    }
-    @Override
-    public void keyReleased (KeyEvent e){
 
-        xDirection = 0;
-        yDirection = 0;
+
+    public void input(KeyEvent e){
+        //System.out.println("Testing Input");
+        if (e.getKeyCode() == KeyEvent.VK_W){
+            System.out.println("W Pressed");
+        }
+        if (e.getKeyCode() == KeyEvent.VK_A){
+            System.out.println("A Pressed");
+            isAPressed = true;
+        }
+        if (e.getKeyCode() == KeyEvent.VK_S){
+            System.out.println("S Pressed");
+        }
+        if (e.getKeyCode() == KeyEvent.VK_D){
+            System.out.println("D Pressed");
+            isDPressed = true;
+        }
+    }
+
+    public void inputStop(KeyEvent e){
+        //System.out.println("Testing InputStop");
+        if (e.getKeyCode() == KeyEvent.VK_W){
+            System.out.println("W Pressed");
+        }
+        if (e.getKeyCode() == KeyEvent.VK_A){
+            System.out.println("A Released");
+            isAPressed = false;
+        }
+        if (e.getKeyCode() == KeyEvent.VK_S){
+            System.out.println("S Pressed");
+        }
+        if (e.getKeyCode() == KeyEvent.VK_D){
+            System.out.println("D Pressed");
+            isDPressed = false;
+        }
+    }
+
+    public void movement(){
+        //This controls the logic of the direction of movement
+        //Then calls the appropriate movement
+        if (!isAPressed && !isDPressed)
+            movePlayer(0,0);
+        if (isAPressed && !isDPressed)
+            movePlayer(-2,0);
+        if (isDPressed && !isAPressed)
+            movePlayer(2,0);
+        if(isAPressed && isDPressed)
+            movePlayer(0,0);
     }
 
     @Override
@@ -83,34 +120,11 @@ class GamePanel extends JPanel implements ActionListener, KeyListener {
 
         //System.out.println("Timer tick: ");
 
-        movePlayer(xDirection,yDirection);
+        //Update the player ship location.
+        //Callable method that parses the logic and moves as required.
+        movement();
 
     }
-
-    public void direction(KeyEvent e){
-        System.out.println("Testing Input");
-        if (e.getKeyCode() == KeyEvent.VK_W){
-            System.out.println("W Pressed");
-            xDirection = 0;
-            yDirection = -1;
-        }
-        if (e.getKeyCode() == KeyEvent.VK_A){
-            System.out.println("A Pressed");
-            xDirection = -1;
-            yDirection = 0;
-        }
-        if (e.getKeyCode() == KeyEvent.VK_S){
-            System.out.println("S Pressed");
-            xDirection = 0;
-            yDirection = 1;
-        }
-        if (e.getKeyCode() == KeyEvent.VK_D){
-            System.out.println("D Pressed");
-            xDirection = 1;
-            yDirection = 0;
-        }
-    }
-
 
     //Method to control the movement of the Player Ship
     public void movePlayer(int xDirection, int yDirection){
@@ -124,12 +138,12 @@ class GamePanel extends JPanel implements ActionListener, KeyListener {
         final int OFFSET = 1;
         //System.out.println("?");
         repaint(posX,posY,width+OFFSET,height+OFFSET);
-        System.out.println(xDirection);
+        //System.out.println(xDirection);
         playerShip.setxPos(posX+moveHorizontal);
-        System.out.println(yDirection);
+        //System.out.println(yDirection);
         playerShip.setyPos(posY+moveVertical);
 
-        repaint();
+        repaint(posX,posY,width+OFFSET,height+OFFSET);
     }
 
     public Dimension getPreferredSize(){
