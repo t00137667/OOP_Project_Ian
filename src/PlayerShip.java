@@ -17,7 +17,7 @@ public class PlayerShip {
         try {
             BufferedImage temp = ImageIO.read(getClass().getResource("resources/Ships.png"));
             playerShipImage= temp.getSubimage(62, 0, 62, 48);
-            System.out.println("Image read");
+            System.out.println("Player Ship Image read");
 
         } catch (IOException ex) {
             System.out.println("Error in read, exiting.");

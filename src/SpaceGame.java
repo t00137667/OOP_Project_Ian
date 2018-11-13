@@ -16,6 +16,7 @@ public class SpaceGame extends JComponent {
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         jFrame.add(new GamePanel());
         jFrame.pack();
+        jFrame.setResizable(false);
         jFrame.setVisible(true);
     }
 
@@ -24,13 +25,15 @@ public class SpaceGame extends JComponent {
 class GamePanel extends JPanel implements ActionListener {
 
 
-    Timer gameTimer = new Timer(10,this);
-    Image background;
+    private Timer gameTimer = new Timer(10,this);
+    private Image background;
     PlayerShip playerShip = new PlayerShip();
-    int xDirection = 0;
-    int yDirection = 0;
-    boolean isAPressed = false;
-    boolean isDPressed = false;
+
+    private boolean isAPressed = false;
+    private boolean isDPressed = false;
+    private boolean isWPressed = false;
+    private boolean isSPressed = false;
+    private boolean isSpacePressed = false;
 
     GamePanel(){
         //Adding a border to the panel
@@ -53,7 +56,7 @@ class GamePanel extends JPanel implements ActionListener {
         // Loading the Background Image
         try {
             background = ImageIO.read(getClass().getResource("skybox/1.png"));
-            System.out.println("Image read");
+            System.out.println("Background Loaded");
 
         } catch (IOException ex) {
             System.out.println("Error in read, exiting.");
@@ -64,10 +67,11 @@ class GamePanel extends JPanel implements ActionListener {
     }
 
 
-    public void input(KeyEvent e){
+    private void input(KeyEvent e){
         //System.out.println("Testing Input");
         if (e.getKeyCode() == KeyEvent.VK_W){
             System.out.println("W Pressed");
+            isWPressed = true;
         }
         if (e.getKeyCode() == KeyEvent.VK_A){
             System.out.println("A Pressed");
@@ -75,17 +79,23 @@ class GamePanel extends JPanel implements ActionListener {
         }
         if (e.getKeyCode() == KeyEvent.VK_S){
             System.out.println("S Pressed");
+            isSPressed = true;
         }
         if (e.getKeyCode() == KeyEvent.VK_D){
             System.out.println("D Pressed");
             isDPressed = true;
         }
+        if (e.getKeyCode() == KeyEvent.VK_SPACE){
+            System.out.println("Space Pressed");
+            isSpacePressed = true;
+        }
     }
 
-    public void inputStop(KeyEvent e){
+    private void inputStop(KeyEvent e){
         //System.out.println("Testing InputStop");
         if (e.getKeyCode() == KeyEvent.VK_W){
             System.out.println("W Pressed");
+            isWPressed = false;
         }
         if (e.getKeyCode() == KeyEvent.VK_A){
             System.out.println("A Released");
@@ -93,24 +103,106 @@ class GamePanel extends JPanel implements ActionListener {
         }
         if (e.getKeyCode() == KeyEvent.VK_S){
             System.out.println("S Pressed");
+            isSPressed = false;
         }
         if (e.getKeyCode() == KeyEvent.VK_D){
             System.out.println("D Pressed");
             isDPressed = false;
         }
+        if (e.getKeyCode() == KeyEvent.VK_SPACE){
+            System.out.println("Space Pressed");
+            isSpacePressed = false;
+        }
     }
 
-    public void movement(){
-        //This controls the logic of the direction of movement
-        //Then calls the appropriate movement
-        if (!isAPressed && !isDPressed)
-            movePlayer(0,0);
-        if (isAPressed && !isDPressed)
-            movePlayer(-2,0);
-        if (isDPressed && !isAPressed)
-            movePlayer(2,0);
-        if(isAPressed && isDPressed)
-            movePlayer(0,0);
+    private void movement(){
+        /* This controls the logic of the direction of movement
+        *  Then calls the appropriate movement
+        *  */
+
+        //No movement
+        if (!isAPressed && !isDPressed && !isWPressed && !isSPressed)
+            dontMove();
+
+        //Move Left Only
+        if (isAPressed && !isDPressed && !isWPressed && !isSPressed && playerShip.getxPos()>50)
+            moveLeft();
+
+        //Move Right Only
+        if (isDPressed && !isAPressed && !isWPressed && !isSPressed && playerShip.getxPos()<930)
+            moveRight();
+
+        //Move Forward Only
+        if (!isAPressed && !isDPressed && isWPressed && !isSPressed && playerShip.getyPos()>512)
+            moveUp();
+
+        //Move Backwards Only
+        if (!isAPressed && !isDPressed && !isWPressed && isSPressed && playerShip.getyPos()<930)
+            moveDown();
+
+        // Both Sideways Movement UP
+        if (isAPressed && isDPressed && isWPressed && !isSPressed && playerShip.getyPos()>512)
+            moveUp();
+
+        //Both Sideways Movement DOWN
+        if (isAPressed && isDPressed && !isWPressed && isSPressed && playerShip.getyPos()<930)
+            moveDown();
+
+        //Both Vertical Movement LEFT
+        if (isAPressed && !isDPressed && isWPressed && isSPressed && playerShip.getxPos()>50)
+            moveLeft();
+
+        //No Vertical Movement RIGHT
+        if (!isAPressed && isDPressed && isWPressed && isSPressed && playerShip.getxPos()<930)
+            moveRight();
+
+        //Move Up Left
+        if (isAPressed && !isDPressed && isWPressed && !isSPressed && playerShip.getxPos()>50 && playerShip.getyPos()>512)
+            moveUpLeft();
+
+        //Move Up Right
+        if (!isAPressed && isDPressed && isWPressed && !isSPressed && playerShip.getxPos()<930 && playerShip.getyPos()>512)
+            moveUpRight();
+
+        //Move Down Left
+        if (isAPressed && !isDPressed && !isWPressed && isSPressed && playerShip.getxPos()>50 && playerShip.getyPos()<930)
+            moveDownLeft();
+
+        //Move Down Right
+        if (!isAPressed && isDPressed && !isWPressed && isSPressed && playerShip.getxPos()<930 && playerShip.getyPos()<930)
+            moveDownRight();
+
+        //All Pressed
+        if (isAPressed && isDPressed && isWPressed && isSPressed)
+            dontMove();
+    }
+
+    private void moveUp(){
+        movePlayer(0,-2);
+    }
+    private void moveDown(){
+        movePlayer(0,2);
+    }
+    private void moveLeft(){
+        movePlayer(-2,0);
+    }
+    private void moveRight(){
+        movePlayer(2,0);
+    }
+    private void moveUpLeft(){
+        movePlayer(-1,-1);
+    }
+    private void moveUpRight(){
+        movePlayer(1,-1);
+    }
+    private void moveDownLeft(){
+        movePlayer(-1,1);
+    }
+    private void moveDownRight(){
+        movePlayer(1,1);
+    }
+    private void dontMove(){
+        movePlayer(0,0);
     }
 
     @Override
@@ -125,7 +217,7 @@ class GamePanel extends JPanel implements ActionListener {
     }
 
     //Method to control the movement of the Player Ship
-    public void movePlayer(int xDirection, int yDirection){
+    private void movePlayer(int xDirection, int yDirection){
 
         int moveHorizontal = xDirection;
         int moveVertical = yDirection;
