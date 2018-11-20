@@ -70,23 +70,23 @@ class GamePanel extends JPanel implements ActionListener {
     private void input(KeyEvent e){
         //System.out.println("Testing Input");
         if (e.getKeyCode() == KeyEvent.VK_W){
-            System.out.println("W Pressed");
+            //System.out.println("W Pressed");
             isWPressed = true;
         }
         if (e.getKeyCode() == KeyEvent.VK_A){
-            System.out.println("A Pressed");
+            //System.out.println("A Pressed");
             isAPressed = true;
         }
         if (e.getKeyCode() == KeyEvent.VK_S){
-            System.out.println("S Pressed");
+            //System.out.println("S Pressed");
             isSPressed = true;
         }
         if (e.getKeyCode() == KeyEvent.VK_D){
-            System.out.println("D Pressed");
+            //System.out.println("D Pressed");
             isDPressed = true;
         }
         if (e.getKeyCode() == KeyEvent.VK_SPACE){
-            System.out.println("Space Pressed");
+            //System.out.println("Space Pressed");
             isSpacePressed = true;
         }
     }
@@ -94,23 +94,23 @@ class GamePanel extends JPanel implements ActionListener {
     private void inputStop(KeyEvent e){
         //System.out.println("Testing InputStop");
         if (e.getKeyCode() == KeyEvent.VK_W){
-            System.out.println("W Pressed");
+            //System.out.println("W Pressed");
             isWPressed = false;
         }
         if (e.getKeyCode() == KeyEvent.VK_A){
-            System.out.println("A Released");
+            //System.out.println("A Released");
             isAPressed = false;
         }
         if (e.getKeyCode() == KeyEvent.VK_S){
-            System.out.println("S Pressed");
+            //System.out.println("S Pressed");
             isSPressed = false;
         }
         if (e.getKeyCode() == KeyEvent.VK_D){
-            System.out.println("D Pressed");
+            //System.out.println("D Pressed");
             isDPressed = false;
         }
         if (e.getKeyCode() == KeyEvent.VK_SPACE){
-            System.out.println("Space Pressed");
+            //System.out.println("Space Pressed");
             isSpacePressed = false;
         }
     }
