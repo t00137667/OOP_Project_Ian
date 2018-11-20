@@ -237,8 +237,8 @@ class GamePanel extends JPanel implements ActionListener {
     }
 
     private boolean canShoot(){
-
-        if(isSpacePressed){
+        if(isSpacePressed && fireCounter > 14){
+            fireCounter=0;
             return true;
         }
         else{
@@ -247,8 +247,9 @@ class GamePanel extends JPanel implements ActionListener {
     }
 
     private void fireWeapons(){
+        fireCounter++;
         if(canShoot()){
-            projectileBlade = new ProjectileBlade();
+            projectileBlade = new ProjectileBlade(playerShip.getxPos(),playerShip.getyPos());
             projectileBlades.add(projectileBlade);
         }
     }
@@ -328,7 +329,7 @@ class GamePanel extends JPanel implements ActionListener {
         for(ProjectileBlade e : projectileBlades){
             int y = e.getyPos();
             repaint(e.getxPos(),e.getyPos(),e.getWidth()+OFFSET,e.getHeight()+OFFSET);
-            y--;
+            y -= 4;
             e.setyPos(y);
             repaint(e.getxPos(),e.getyPos(),e.getWidth()+OFFSET,e.getHeight()+OFFSET);
         }

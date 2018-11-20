@@ -14,13 +14,28 @@ public class ProjectileBlade {
 
     ProjectileBlade(){
         try{
-            weapon1 = ImageIO.read(getClass().getResource("Resources/Ships.png"));
-            projectileImage= weapon1.getSubimage(108, 192, 22, 23);
-            System.out.println("Player Ship Image read");
+            weapon1 = ImageIO.read(getClass().getResource("Resources/Wpn1.png"));
+            projectileImage= weapon1.getSubimage(108, 160, 22, 22);
+            System.out.println("Weapon Image read");
         } catch (IOException ex){
             System.out.println("Error in read, exiting.");
             System.exit(0);
         }
+    }
+
+    ProjectileBlade(int xPos, int yPos){
+        try{
+            weapon1 = ImageIO.read(getClass().getResource("Resources/Wpn1.png"));
+            projectileImage= weapon1.getSubimage(108, 160, 22, 22);
+            System.out.println("Weapon Image read");
+        } catch (IOException ex){
+            System.out.println("Error in read, exiting.");
+            System.exit(0);
+        }
+
+        setxPos(xPos);
+        setyPos(yPos);
+
     }
 
     public void paintWeapon(Graphics g){
