@@ -31,11 +31,15 @@ class GamePanel extends JPanel implements ActionListener {
     PlayerShip playerShip = new PlayerShip();
     ArrayList<EnemyShip> enemyShips = new ArrayList();
     EnemyShip enemyShip;
+    ArrayList<ProjectileBlade> projectileBlades = new ArrayList();
+    ProjectileBlade projectileBlade;
 
-    private int counter = 0;
+    private int spawnCounter = 0;
     private int delay = 0;
     private int lastSpawn = 0;
     boolean onDelay = false;
+
+    private int fireCounter = 0;
 
     private boolean isAPressed = false;
     private boolean isDPressed = false;
@@ -222,22 +226,43 @@ class GamePanel extends JPanel implements ActionListener {
         //Callable method that parses the logic and moves as required.
         movement();
 
+        fireWeapons();
+
         spawnEnemies();
 
         moveEnemies();
 
+        moveProjectiles();
+
+    }
+
+    private boolean canShoot(){
+
+        if(isSpacePressed){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    private void fireWeapons(){
+        if(canShoot()){
+            projectileBlade = new ProjectileBlade();
+            projectileBlades.add(projectileBlade);
+        }
     }
 
     private boolean canSpawn(){
-        counter++;
+        spawnCounter++;
 
-        if (counter < delay){
+        if (spawnCounter < delay){
             onDelay = true;
         }
         else{
             onDelay = false;
             delay = (int)Math.floor(Math.random()*300);
-            counter = 0;
+            spawnCounter = 0;
         }
 
         if (onDelay){
@@ -255,8 +280,13 @@ class GamePanel extends JPanel implements ActionListener {
             System.out.println("Enemy spawned");
             int ship = (int)(Math.random()*4);
             int spawn = (int)(Math.random()*10);
-            enemyShip = new EnemyShip(ship,spawn);
-            enemyShips.add(enemyShip);
+
+            if (lastSpawn != spawn){
+                enemyShip = new EnemyShip(ship,spawn);
+                enemyShips.add(enemyShip);
+            }
+
+            lastSpawn = spawn;
         }
 
 
@@ -288,6 +318,16 @@ class GamePanel extends JPanel implements ActionListener {
         for(EnemyShip e : enemyShips){
             int y = e.getyPos();
             repaint(e.getxPos(),e.getyPos(),e.getWidth()+OFFSET,e.getHeight()+OFFSET);
+            y++;
+            e.setyPos(y);
+            repaint(e.getxPos(),e.getyPos(),e.getWidth()+OFFSET,e.getHeight()+OFFSET);
+        }
+    }
+    private void moveProjectiles(){
+        final int OFFSET= 1;
+        for(ProjectileBlade e : projectileBlades){
+            int y = e.getyPos();
+            repaint(e.getxPos(),e.getyPos(),e.getWidth()+OFFSET,e.getHeight()+OFFSET);
             y--;
             e.setyPos(y);
             repaint(e.getxPos(),e.getyPos(),e.getWidth()+OFFSET,e.getHeight()+OFFSET);
@@ -303,8 +343,12 @@ class GamePanel extends JPanel implements ActionListener {
         g.drawImage(background,0,0,null);
         g.drawString("This is my custom Panel",10,20);
         playerShip.paintShip(g);
+        //enemyShip.paintShip(g);
         for(EnemyShip e : enemyShips){
             e.paintShip(g);
+        }
+        for(ProjectileBlade p : projectileBlades){
+            p.paintWeapon(g);
         }
     }
 }
