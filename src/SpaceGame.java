@@ -35,6 +35,7 @@ class GamePanel extends JPanel implements ActionListener {
     private int counter = 0;
     private int delay = 0;
     private int lastSpawn = 0;
+    boolean onDelay = false;
 
     private boolean isAPressed = false;
     private boolean isDPressed = false;
@@ -224,10 +225,24 @@ class GamePanel extends JPanel implements ActionListener {
 
     }
 
-    private void spawnEnemies(){
-        //HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    private boolean canSpawn(){
         counter++;
+
+        if (counter > delay){
+            
+        }
+
+        if (onDelay){
+            return false;
+        }
+
         delay = (int)Math.floor(Math.random());
+        return true;
+    }
+
+    private void spawnEnemies(){
+
+
 
 
     }
