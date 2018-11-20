@@ -221,8 +221,10 @@ class GamePanel extends JPanel implements ActionListener {
         //Update the player ship location.
         //Callable method that parses the logic and moves as required.
         movement();
-        moveEnemies();
+
         spawnEnemies();
+
+        moveEnemies();
 
     }
 
@@ -251,8 +253,8 @@ class GamePanel extends JPanel implements ActionListener {
         if (canSpawn())
         {
             System.out.println("Enemy spawned");
-            int ship = (int)Math.random()*4;
-            int spawn = (int)Math.random()*10;
+            int ship = (int)(Math.random()*4);
+            int spawn = (int)(Math.random()*10);
             enemyShip = new EnemyShip(ship,spawn);
             enemyShips.add(enemyShip);
         }
@@ -284,11 +286,11 @@ class GamePanel extends JPanel implements ActionListener {
     private void moveEnemies(){
         final int OFFSET = 1;
         for(EnemyShip e : enemyShips){
-            int y = enemyShip.getyPos();
-            repaint(enemyShip.getxPos(),enemyShip.getyPos(),enemyShip.getWidth()+OFFSET,enemyShip.getHeight()+OFFSET);
+            int y = e.getyPos();
+            repaint(e.getxPos(),e.getyPos(),e.getWidth()+OFFSET,e.getHeight()+OFFSET);
             y--;
-            enemyShip.setyPos(y);
-            repaint(enemyShip.getxPos(),enemyShip.getyPos(),enemyShip.getWidth()+OFFSET,enemyShip.getHeight()+OFFSET);
+            e.setyPos(y);
+            repaint(e.getxPos(),e.getyPos(),e.getWidth()+OFFSET,e.getHeight()+OFFSET);
         }
     }
 
@@ -301,5 +303,8 @@ class GamePanel extends JPanel implements ActionListener {
         g.drawImage(background,0,0,null);
         g.drawString("This is my custom Panel",10,20);
         playerShip.paintShip(g);
+        for(EnemyShip e : enemyShips){
+            e.paintShip(g);
+        }
     }
 }
