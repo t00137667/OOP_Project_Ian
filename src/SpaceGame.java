@@ -5,6 +5,7 @@ import java.awt.event.*;
 import java.io.IOException;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
+import java.util.ArrayList;
 
 public class SpaceGame extends JComponent {
     public static void main(String[] args) {
@@ -28,6 +29,12 @@ class GamePanel extends JPanel implements ActionListener {
     private Timer gameTimer = new Timer(10,this);
     private Image background;
     PlayerShip playerShip = new PlayerShip();
+    ArrayList<EnemyShip> enemyShips = new ArrayList();
+    EnemyShip enemyShip;
+
+    private int counter = 0;
+    private int delay = 0;
+    private int lastSpawn = 0;
 
     private boolean isAPressed = false;
     private boolean isDPressed = false;
@@ -55,7 +62,7 @@ class GamePanel extends JPanel implements ActionListener {
 
         // Loading the Background Image
         try {
-            background = ImageIO.read(getClass().getResource("skybox/1.png"));
+            background = ImageIO.read(getClass().getResource("Resources/skybox/1.png"));
             System.out.println("Background Loaded");
 
         } catch (IOException ex) {
@@ -213,6 +220,15 @@ class GamePanel extends JPanel implements ActionListener {
         //Update the player ship location.
         //Callable method that parses the logic and moves as required.
         movement();
+        moveEnemies();
+
+    }
+
+    private void spawnEnemies(){
+        //HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        counter++;
+        delay = (int)Math.floor(Math.random());
+
 
     }
 
@@ -234,6 +250,17 @@ class GamePanel extends JPanel implements ActionListener {
         playerShip.setyPos(posY+moveVertical);
 
         repaint(posX,posY,width+OFFSET,height+OFFSET);
+    }
+
+    private void moveEnemies(){
+        final int OFFSET = 1;
+        for(EnemyShip e : enemyShips){
+            int y = enemyShip.getyPos();
+            repaint(enemyShip.getxPos(),enemyShip.getyPos(),enemyShip.getWidth()+OFFSET,enemyShip.getHeight()+OFFSET);
+            y--;
+            enemyShip.setyPos(y);
+            repaint(enemyShip.getxPos(),enemyShip.getyPos(),enemyShip.getWidth()+OFFSET,enemyShip.getHeight()+OFFSET);
+        }
     }
 
     public Dimension getPreferredSize(){

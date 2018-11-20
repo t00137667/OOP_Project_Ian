@@ -15,7 +15,7 @@ public class PlayerShip {
     PlayerShip(){
         // Attempt to load in the image of the player ship.
         try {
-            BufferedImage temp = ImageIO.read(getClass().getResource("resources/Ships.png"));
+            BufferedImage temp = ImageIO.read(getClass().getResource("Resources/Ships.png"));
             playerShipImage= temp.getSubimage(62, 0, 62, 48);
             System.out.println("Player Ship Image read");
 
