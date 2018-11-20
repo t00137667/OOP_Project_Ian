@@ -222,26 +222,40 @@ class GamePanel extends JPanel implements ActionListener {
         //Callable method that parses the logic and moves as required.
         movement();
         moveEnemies();
+        spawnEnemies();
 
     }
 
     private boolean canSpawn(){
         counter++;
 
-        if (counter > delay){
-            
+        if (counter < delay){
+            onDelay = true;
+        }
+        else{
+            onDelay = false;
+            delay = (int)Math.floor(Math.random()*300);
+            counter = 0;
         }
 
         if (onDelay){
             return false;
         }
 
-        delay = (int)Math.floor(Math.random());
+
         return true;
     }
 
     private void spawnEnemies(){
 
+        if (canSpawn())
+        {
+            System.out.println("Enemy spawned");
+            int ship = (int)Math.random()*4;
+            int spawn = (int)Math.random()*10;
+            enemyShip = new EnemyShip(ship,spawn);
+            enemyShips.add(enemyShip);
+        }
 
 
 
