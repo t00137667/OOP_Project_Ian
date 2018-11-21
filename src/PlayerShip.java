@@ -3,7 +3,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-public class PlayerShip {
+public class PlayerShip extends Ship {
     public BufferedImage playerShipImage;
 
     //Initial Positioning (Center of bottom-ish)
@@ -23,6 +23,10 @@ public class PlayerShip {
             System.out.println("Error in read, exiting.");
             System.exit(0);
         }
+        setxPos(this.xPos);
+        setyPos(this.yPos);
+        setWidth(width);
+        setHeight(height);
     }
 
     public void paintShip(Graphics g){
@@ -31,35 +35,4 @@ public class PlayerShip {
 
     //Setters and Getters
 
-    public void setxPos(int xPos) {
-        this.xPos = xPos;
-    }
-
-    public int getxPos() {
-        return xPos;
-    }
-
-    public void setyPos(int yPos) {
-        this.yPos = yPos;
-    }
-
-    public int getyPos() {
-        return yPos;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
-    public int getWidth() {
-        return width;
-    }
 }

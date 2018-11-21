@@ -3,12 +3,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-public class EnemyShip {
+public class EnemyShip extends Ship {
 
-    private int xPos;
-    private int yPos;
-    private int width;
-    private int height;
 
     BufferedImage enemyShipImage;
     BufferedImage temp;
@@ -86,43 +82,11 @@ public class EnemyShip {
         }
     }
 
-    public void paintShip(Graphics g){
-        g.drawImage(enemyShipImage,getxPos(),getyPos(),null);
-    }
-
-    public void setxPos(int xPos) {
-        this.xPos = xPos;
-    }
-
-    public int getxPos() {
-        return xPos;
-    }
-
-    public void setyPos(int yPos) {
-        this.yPos = yPos;
-    }
-
-    public int getyPos() {
-        return yPos;
-    }
-
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
     public void setEnemyShipImage(BufferedImage enemyShipImage) {
         this.enemyShipImage = enemyShipImage;
+    }
+
+    public void paintShip(Graphics g){
+        g.drawImage(enemyShipImage,getxPos(),getyPos(),null);
     }
 }

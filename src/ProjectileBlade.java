@@ -12,6 +12,8 @@ public class ProjectileBlade {
     private int width;
     private int height;
 
+    boolean destroyed = false;
+
     ProjectileBlade(){
         try{
             weapon1 = ImageIO.read(getClass().getResource("Resources/Wpn1.png"));
@@ -36,6 +38,14 @@ public class ProjectileBlade {
         setxPos(xPos);
         setyPos(yPos);
 
+    }
+
+    public void setDestroyed(boolean destroyed) {
+
+        this.destroyed = destroyed;
+    }
+    public boolean getDestroyed(){
+        return destroyed;
     }
 
     public void paintWeapon(Graphics g){

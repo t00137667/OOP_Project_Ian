@@ -1,11 +1,13 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.text.html.HTMLDocument;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class SpaceGame extends JComponent {
     public static void main(String[] args) {
@@ -249,7 +251,7 @@ class GamePanel extends JPanel implements ActionListener {
     private void fireWeapons(){
         fireCounter++;
         if(canShoot()){
-            projectileBlade = new ProjectileBlade(playerShip.getxPos(),playerShip.getyPos());
+            projectileBlade = new ProjectileBlade(playerShip.getxPos()+((playerShip.getWidth()/2)-11),playerShip.getyPos());
             projectileBlades.add(projectileBlade);
         }
     }
@@ -276,6 +278,7 @@ class GamePanel extends JPanel implements ActionListener {
 
     private void spawnEnemies(){
 
+        // Checks if the spawn delay has passed. If attempts a spawn in a random spawn location. Does not spawn if it was the same location as the last spawn
         if (canSpawn())
         {
             System.out.println("Enemy spawned");
@@ -325,14 +328,31 @@ class GamePanel extends JPanel implements ActionListener {
         }
     }
     private void moveProjectiles(){
+        // For Each Loops removed in favour of an iterator to allow for concurrent modification
         final int OFFSET= 1;
-        for(ProjectileBlade e : projectileBlades){
+        Iterator<ProjectileBlade> iterator = projectileBlades.iterator();
+        while(iterator.hasNext()){
+            ProjectileBlade e = iterator.next();
             int y = e.getyPos();
-            repaint(e.getxPos(),e.getyPos(),e.getWidth()+OFFSET,e.getHeight()+OFFSET);
-            y -= 4;
-            e.setyPos(y);
-            repaint(e.getxPos(),e.getyPos(),e.getWidth()+OFFSET,e.getHeight()+OFFSET);
+            if (y < -30){
+                e.setDestroyed(true);
+            }
+            else{
+                repaint(e.getxPos(),e.getyPos(),e.getWidth()+OFFSET,e.getHeight()+OFFSET);
+                y -= 4;
+                e.setyPos(y);
+                repaint(e.getxPos(),e.getyPos(),e.getWidth()+OFFSET,e.getHeight()+OFFSET);
+            }
         }
+        while(iterator.hasNext()){
+            ProjectileBlade p = iterator.next();
+            if (p.getDestroyed())
+                projectileBlades.remove(p);
+        }
+    }
+
+    private void collides(){
+        
     }
 
     public Dimension getPreferredSize(){
