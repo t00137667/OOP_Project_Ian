@@ -1,3 +1,5 @@
+import javafx.embed.swing.JFXPanel;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.text.html.HTMLDocument;
@@ -12,6 +14,7 @@ import java.util.Iterator;
 public class SpaceGame extends JComponent {
     public static void main(String[] args) {
         showGUI();
+        JFXPanel fxPanel = new JFXPanel();
     }
 
     private static void showGUI(){
@@ -236,6 +239,10 @@ class GamePanel extends JPanel implements ActionListener {
 
         moveProjectiles();
 
+        checkForCollisions();
+
+        destroyDestroyed();
+
     }
 
     private boolean canShoot(){
@@ -253,6 +260,7 @@ class GamePanel extends JPanel implements ActionListener {
         if(canShoot()){
             projectileBlade = new ProjectileBlade(playerShip.getxPos()+((playerShip.getWidth()/2)-11),playerShip.getyPos());
             projectileBlades.add(projectileBlade);
+            AudioFilePlayer.playAudio("src/Resources/Laser Sounds/laser4.wav");
         }
     }
 
@@ -329,6 +337,7 @@ class GamePanel extends JPanel implements ActionListener {
     }
     private void moveProjectiles(){
         // For Each Loops removed in favour of an iterator to allow for concurrent modification
+        // Referenced from https://www.baeldung.com/java-concurrentmodificationexception
         final int OFFSET= 1;
         Iterator<ProjectileBlade> iterator = projectileBlades.iterator();
         while(iterator.hasNext()){
@@ -346,13 +355,55 @@ class GamePanel extends JPanel implements ActionListener {
         }
         while(iterator.hasNext()){
             ProjectileBlade p = iterator.next();
-            if (p.getDestroyed())
+            if (p.isDestroyed())
                 projectileBlades.remove(p);
         }
     }
 
-    private void collides(){
+    private void checkForCollisions(){
+        Rectangle eS;
+        Rectangle pB;
+        Rectangle pS;
+
+        for (EnemyShip e : enemyShips){
+            eS = new Rectangle(e.getxPos(),e.getyPos(),e.getWidth(),e.getHeight());
+            //System.out.println(e.getxPos()+" "+e.getyPos()+" "+e.getWidth()+" "+e.getHeight());
+            for(ProjectileBlade p : projectileBlades){
+                pB = new Rectangle(p.getxPos(),p.getyPos(),p.getWidth(),p.getHeight());
+                //System.out.println(p.getxPos()+" "+p.getyPos()+" "+p.getWidth()+" "+p.getHeight());
+                if (eS.contains(pB)){
+                    System.out.println("Collision Detected");
+                    e.setIsDestroyed(true);
+                    p.setDestroyed(true);
+                    displayHits(pB.getLocation());
+                }
+            }
+        }
         
+    }
+
+    private void displayHits(Point location){
+
+    }
+
+    private void destroyDestroyed(){
+        Iterator<EnemyShip> enemyShipIterator = enemyShips.iterator();
+        Iterator<ProjectileBlade> projectileBladeIterator = projectileBlades.iterator();
+        while(enemyShipIterator.hasNext()){
+            EnemyShip e = enemyShipIterator.next();
+            if(e.isDestroyed()){
+                enemyShipIterator.remove();
+                System.out.println("Ship Destroyed");
+            }
+        }
+        while(projectileBladeIterator.hasNext()){
+            //projectileBlades.removeIf(p -> p.isDestroyed());
+            ProjectileBlade e = projectileBladeIterator.next();
+            if(e.isDestroyed()){
+                projectileBladeIterator.remove();
+                //System.out.println("Projectile Destroyed");
+            }
+        }
     }
 
     public Dimension getPreferredSize(){
@@ -364,7 +415,7 @@ class GamePanel extends JPanel implements ActionListener {
         g.drawImage(background,0,0,null);
         g.drawString("This is my custom Panel",10,20);
         playerShip.paintShip(g);
-        //enemyShip.paintShip(g);
+
         for(EnemyShip e : enemyShips){
             e.paintShip(g);
         }

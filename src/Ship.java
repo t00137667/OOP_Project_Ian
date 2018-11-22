@@ -6,6 +6,7 @@ public abstract class Ship {
     private int yPos;
     private int width;
     private int height;
+    private boolean isDestroyed = false;
 
 
 
@@ -43,4 +44,11 @@ public abstract class Ship {
         return height;
     }
 
+    public void setIsDestroyed(boolean destroyed) {
+        isDestroyed = destroyed;
+    }
+
+    public boolean isDestroyed() {
+        return isDestroyed;
+    }
 }

@@ -29,7 +29,7 @@ public class ProjectileBlade {
         try{
             weapon1 = ImageIO.read(getClass().getResource("Resources/Wpn1.png"));
             projectileImage= weapon1.getSubimage(108, 160, 22, 22);
-            System.out.println("Weapon Image read");
+            //System.out.println("Weapon Image read");
         } catch (IOException ex){
             System.out.println("Error in read, exiting.");
             System.exit(0);
@@ -37,6 +37,8 @@ public class ProjectileBlade {
 
         setxPos(xPos);
         setyPos(yPos);
+        setWidth(22);
+        setHeight(22);
 
     }
 
@@ -44,7 +46,7 @@ public class ProjectileBlade {
 
         this.destroyed = destroyed;
     }
-    public boolean getDestroyed(){
+    public boolean isDestroyed(){
         return destroyed;
     }
 
