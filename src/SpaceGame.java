@@ -1,31 +1,140 @@
 import javafx.embed.swing.JFXPanel;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.text.html.HTMLDocument;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
-import java.awt.KeyEventDispatcher;
-import java.awt.KeyboardFocusManager;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 public class SpaceGame extends JComponent {
+    static JFrame jFrame;
+    static JPanel mPanel = new JPanel();
+    static Dimension frameDimension = new Dimension(1024,1024);
     public static void main(String[] args) {
-        showGUI();
-        JFXPanel fxPanel = new JFXPanel();
+
+        SwingUtilities.invokeLater(new Runnable(){
+            @Override
+            public void run() {
+                showGUI();
+                JFXPanel fxPanel = new JFXPanel();
+            }
+        });
+
     }
 
     private static void showGUI(){
-        JFrame jFrame = new JFrame("Space Game");
+        jFrame = new JFrame("Space Game");
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        jFrame.add(new GamePanel());
+        jFrame.setMinimumSize(frameDimension);
+
+        mPanel.setBackground(Color.black);
+        jFrame.add(mPanel);
+        //jFrame.add(new MenuPanel());
+        //jFrame.add(new GamePanel());
         jFrame.pack();
         jFrame.setResizable(false);
         jFrame.setVisible(true);
+        displayMenu();
     }
 
+    public static void displayMenu(){
+        mPanel.removeAll();
+        mPanel.add(new MenuPanel());
+        mPanel.revalidate();
+        mPanel.repaint();
+    }
+
+    public static void startGame(){
+
+        mPanel.removeAll();
+        mPanel.add(new GamePanel());
+        mPanel.revalidate();
+        mPanel.repaint();
+
+    }
+
+}
+
+class MenuPanel extends JPanel implements ActionListener {
+
+    Image background;
+    MenuPanel(){
+        setBorder(BorderFactory.createLineBorder(Color.black));
+        setFocusable(false);
+        try{
+            background = ImageIO.read(getClass().getResource("Resources/skybox/5.png"));
+            System.out.println("Menu Background loaded");
+
+
+        }catch (IOException ex){
+            System.out.println("Error in background read.");
+            setBackground(Color.LIGHT_GRAY);
+        }
+
+        FlowLayout flowLayout = new FlowLayout();
+        this.setLayout(flowLayout);
+
+        JLabel name = new JLabel("Space Game");
+        Font font = new Font("sans-serif",Font.BOLD,80);
+        name.setFont(font);
+        Color space = new Color(60,28,49);
+        name.setForeground(space);
+        name.setLocation(0,0);
+        //name.setSize(1000,200);
+        name.setMinimumSize(buttonSize());
+        name.setPreferredSize(buttonSize());
+        name.setMaximumSize(buttonSize());
+        //name.setBorder(BorderFactory.createLineBorder(Color.black));
+        name.setHorizontalAlignment(0);
+        name.setVisible(true);
+        this.add(name);
+
+        JLabel start = new JLabel("Start");
+        Font buttonFont = new Font("sans-serif",Font.BOLD,40);
+        start.setFont(buttonFont);
+        Color buttons = new Color(20,80,81);
+        start.setForeground(buttons);
+        start.setLocation(0,201);
+        start.setMinimumSize(buttonSize());
+        //start.setBorder(BorderFactory.createLineBorder(Color.black));
+        start.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                System.out.println("Start Button Clicked");
+                //setVisible(false);
+                SpaceGame.startGame();
+            }
+
+        });
+        start.setVisible(true);
+        //this.setVisible(true);
+        this.add(start);
+
+        JLabel scores = new JLabel("High Scores");
+
+
+
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+
+    }
+
+    public Dimension buttonSize(){
+        return new Dimension(1000,200);
+    }
+
+    public Dimension getPreferredSize(){
+        return new Dimension(1024,1024);
+    }
+    public void paintComponent(Graphics g){
+        super.paintComponent(g);
+        g.drawImage(background,0,0,null);
+        System.out.println("Background Painted");
+
+    }
 }
 
 class GamePanel extends JPanel implements ActionListener {
@@ -56,8 +165,56 @@ class GamePanel extends JPanel implements ActionListener {
         //Adding a border to the panel
         setBorder(BorderFactory.createLineBorder(Color.black));
         setFocusable(true);
+        grabFocus();
+        requestFocusInWindow();
 
-        addKeyListener(new KeyAdapter() {
+        //Assign a KeyBind to W
+        Action wKeyAction = new WKeyAction();
+        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_W,0),"w pressed");
+        getActionMap().put("w pressed",wKeyAction);
+
+        Action wReleaseKeyAction = new WReleaseKeyAction();
+        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_W,0, true),"w released");
+        getActionMap().put("w released",wReleaseKeyAction);
+
+        //Assign a KeyBind to A
+        Action aKeyAction = new AKeyAction();
+        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_A,0),"a pressed");
+        getActionMap().put("a pressed",aKeyAction);
+
+        Action aReleaseKeyAction = new AReleaseKeyAction();
+        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_A,0, true),"a released");
+        getActionMap().put("a released",aReleaseKeyAction);
+
+        //Assign a KeyBind to S
+        Action sKeyAction = new SKeyAction();
+        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_S,0),"s pressed");
+        getActionMap().put("s pressed",sKeyAction);
+
+        Action sReleaseKeyAction = new SReleaseKeyAction();
+        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_S,0, true),"s released");
+        getActionMap().put("s released",sReleaseKeyAction);
+
+        //Assign a KeyBind to D
+        Action dKeyAction = new DKeyAction();
+        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_D,0),"d pressed");
+        getActionMap().put("d pressed",dKeyAction);
+
+        Action dReleaseKeyAction = new DReleaseKeyAction();
+        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_D,0, true),"d released");
+        getActionMap().put("d released",dReleaseKeyAction);
+
+        //Assign a KeyBind to Space
+        Action spaceKeyAction = new SpaceKeyAction();
+        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE,0),"space pressed");
+        getActionMap().put("space pressed",spaceKeyAction);
+
+        Action spaceReleaseKeyAction = new SpaceReleaseKeyAction();
+        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE,0, true),"space released");
+        getActionMap().put("space released",spaceReleaseKeyAction);
+
+
+        /*addKeyListener(new KeyAdapter() {
             public void keyPressed (KeyEvent e){
                 input(e);
             }
@@ -67,7 +224,7 @@ class GamePanel extends JPanel implements ActionListener {
             public void keyReleased (KeyEvent e){
                 inputStop(e);
             }
-        });
+        });*/
 
 
         // Loading the Background Image
@@ -80,56 +237,120 @@ class GamePanel extends JPanel implements ActionListener {
             System.exit(0);
         }
 
+
+        setMinimumSize(getPreferredSize());
+        //setVisible(true);
         gameTimer.start();
     }
 
+    class WKeyAction extends AbstractAction{
+        @Override
+        public void actionPerformed(ActionEvent e) {
 
-    private void input(KeyEvent e){
-        //System.out.println("Testing Input");
-        if (e.getKeyCode() == KeyEvent.VK_W){
-            //System.out.println("W Pressed");
-            isWPressed = true;
+            setW(true);
         }
-        if (e.getKeyCode() == KeyEvent.VK_A){
-            //System.out.println("A Pressed");
-            isAPressed = true;
+    }
+    class WReleaseKeyAction extends AbstractAction{
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+            setW(false);
         }
-        if (e.getKeyCode() == KeyEvent.VK_S){
-            //System.out.println("S Pressed");
-            isSPressed = true;
+    }
+    class AKeyAction extends AbstractAction{
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+            setA(true);
         }
-        if (e.getKeyCode() == KeyEvent.VK_D){
-            //System.out.println("D Pressed");
-            isDPressed = true;
+    }
+    class AReleaseKeyAction extends AbstractAction{
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+            setA(false);
         }
-        if (e.getKeyCode() == KeyEvent.VK_SPACE){
-            //System.out.println("Space Pressed");
-            isSpacePressed = true;
+    }
+    class SKeyAction extends AbstractAction{
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+            setS(true);
+        }
+    }
+    class SReleaseKeyAction extends AbstractAction{
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+            setS(false);
+        }
+    }
+    class DKeyAction extends AbstractAction{
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+            setD(true);
+        }
+    }
+    class DReleaseKeyAction extends AbstractAction{
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+            setD(false);
+        }
+    }
+    class SpaceKeyAction extends AbstractAction{
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+            setSpace(true);
+        }
+    }
+    class SpaceReleaseKeyAction extends AbstractAction{
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+            setSpace(false);
         }
     }
 
-    private void inputStop(KeyEvent e){
-        //System.out.println("Testing InputStop");
-        if (e.getKeyCode() == KeyEvent.VK_W){
-            //System.out.println("W Pressed");
-            isWPressed = false;
-        }
-        if (e.getKeyCode() == KeyEvent.VK_A){
-            //System.out.println("A Released");
-            isAPressed = false;
-        }
-        if (e.getKeyCode() == KeyEvent.VK_S){
-            //System.out.println("S Pressed");
-            isSPressed = false;
-        }
-        if (e.getKeyCode() == KeyEvent.VK_D){
-            //System.out.println("D Pressed");
-            isDPressed = false;
-        }
-        if (e.getKeyCode() == KeyEvent.VK_SPACE){
-            //System.out.println("Space Pressed");
-            isSpacePressed = false;
-        }
+    private void setW(boolean isWPressed){
+        this.isWPressed = isWPressed;
+    }
+    private void setA(boolean isAPressed){
+        this.isAPressed = isAPressed;
+    }
+    private void setS(boolean isSPressed){
+        this.isSPressed = isSPressed;
+    }
+    private void setD(boolean isDPressed){
+        this.isDPressed = isDPressed;
+    }
+    private void setSpace(boolean isSpacePressed){
+        this.isSpacePressed = isSpacePressed;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+
+        //System.out.println("Timer tick: ");
+
+        //Update the player ship location.
+        //Callable method that parses the logic and moves as required.
+        movement();
+
+        fireWeapons();
+
+        spawnEnemies();
+
+        moveEnemies();
+
+        moveProjectiles();
+
+        checkForCollisions();
+
+        destroyDestroyed();
+
     }
 
     private void movement(){
@@ -222,29 +443,6 @@ class GamePanel extends JPanel implements ActionListener {
         movePlayer(0,0);
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-
-        //System.out.println("Timer tick: ");
-
-        //Update the player ship location.
-        //Callable method that parses the logic and moves as required.
-        movement();
-
-        fireWeapons();
-
-        spawnEnemies();
-
-        moveEnemies();
-
-        moveProjectiles();
-
-        checkForCollisions();
-
-        destroyDestroyed();
-
-    }
-
     private boolean canShoot(){
         if(isSpacePressed && fireCounter > 14){
             fireCounter=0;
@@ -289,7 +487,7 @@ class GamePanel extends JPanel implements ActionListener {
         // Checks if the spawn delay has passed. If attempts a spawn in a random spawn location. Does not spawn if it was the same location as the last spawn
         if (canSpawn())
         {
-            System.out.println("Enemy spawned");
+            //System.out.println("Enemy spawned");
             int ship = (int)(Math.random()*4);
             int spawn = (int)(Math.random()*10);
 
@@ -300,9 +498,6 @@ class GamePanel extends JPanel implements ActionListener {
 
             lastSpawn = spawn;
         }
-
-
-
     }
 
     //Method to control the movement of the Player Ship
@@ -384,6 +579,7 @@ class GamePanel extends JPanel implements ActionListener {
 
     private void displayHits(Point location){
 
+        System.out.println(location);
     }
 
     private void destroyDestroyed(){
@@ -397,7 +593,6 @@ class GamePanel extends JPanel implements ActionListener {
             }
         }
         while(projectileBladeIterator.hasNext()){
-            //projectileBlades.removeIf(p -> p.isDestroyed());
             ProjectileBlade e = projectileBladeIterator.next();
             if(e.isDestroyed()){
                 projectileBladeIterator.remove();
@@ -424,3 +619,4 @@ class GamePanel extends JPanel implements ActionListener {
         }
     }
 }
+
