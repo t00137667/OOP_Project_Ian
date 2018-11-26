@@ -11,6 +11,8 @@ public class SpaceGame extends JComponent {
     static JFrame jFrame;
     static JPanel mPanel = new JPanel();
     static Dimension frameDimension = new Dimension(1024,1024);
+    static Score score = new Score();
+
     public static void main(String[] args) {
 
         SwingUtilities.invokeLater(new Runnable(){
@@ -30,12 +32,11 @@ public class SpaceGame extends JComponent {
 
         mPanel.setBackground(Color.black);
         jFrame.add(mPanel);
-        //jFrame.add(new MenuPanel());
-        //jFrame.add(new GamePanel());
         jFrame.pack();
         jFrame.setResizable(false);
         jFrame.setVisible(true);
         displayMenu();
+
     }
 
     public static void displayMenu(){
@@ -75,17 +76,15 @@ class MenuPanel extends JPanel implements ActionListener {
         FlowLayout flowLayout = new FlowLayout();
         this.setLayout(flowLayout);
 
-        JLabel name = new JLabel("Space Game");
+        JLabel name = new JLabel("The Pillars of Oop");
         Font font = new Font("sans-serif",Font.BOLD,80);
         name.setFont(font);
         Color space = new Color(60,28,49);
         name.setForeground(space);
         name.setLocation(0,0);
-        //name.setSize(1000,200);
         name.setMinimumSize(buttonSize());
         name.setPreferredSize(buttonSize());
         name.setMaximumSize(buttonSize());
-        //name.setBorder(BorderFactory.createLineBorder(Color.black));
         name.setHorizontalAlignment(0);
         name.setVisible(true);
         this.add(name);
@@ -97,7 +96,6 @@ class MenuPanel extends JPanel implements ActionListener {
         start.setForeground(buttons);
         start.setLocation(0,201);
         start.setMinimumSize(buttonSize());
-        //start.setBorder(BorderFactory.createLineBorder(Color.black));
         start.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -108,7 +106,6 @@ class MenuPanel extends JPanel implements ActionListener {
 
         });
         start.setVisible(true);
-        //this.setVisible(true);
         this.add(start);
 
         JLabel scores = new JLabel("High Scores");
@@ -132,11 +129,14 @@ class MenuPanel extends JPanel implements ActionListener {
     public void paintComponent(Graphics g){
         super.paintComponent(g);
         g.drawImage(background,0,0,null);
-        System.out.println("Background Painted");
+        //System.out.println("Background Painted");
 
     }
 }
 
+/**
+ *
+ */
 class GamePanel extends JPanel implements ActionListener {
 
 
@@ -154,6 +154,9 @@ class GamePanel extends JPanel implements ActionListener {
     boolean onDelay = false;
 
     private int fireCounter = 0;
+
+    private int score = 0;
+    JLabel scoreLabel;
 
     private boolean isAPressed = false;
     private boolean isDPressed = false;
@@ -214,19 +217,6 @@ class GamePanel extends JPanel implements ActionListener {
         getActionMap().put("space released",spaceReleaseKeyAction);
 
 
-        /*addKeyListener(new KeyAdapter() {
-            public void keyPressed (KeyEvent e){
-                input(e);
-            }
-        });
-
-        addKeyListener(new KeyAdapter() {
-            public void keyReleased (KeyEvent e){
-                inputStop(e);
-            }
-        });*/
-
-
         // Loading the Background Image
         try {
             background = ImageIO.read(getClass().getResource("Resources/skybox/1.png"));
@@ -237,9 +227,17 @@ class GamePanel extends JPanel implements ActionListener {
             System.exit(0);
         }
 
+        scoreLabel = new JLabel();
+        Font font = new Font("sans-serif",Font.BOLD,20);
+        scoreLabel.setFont(font);
+        scoreLabel.setForeground(Color.RED);
+        scoreLabel.setSize(100,50);
+        scoreLabel.setLocation(0,0);
+        this.add(scoreLabel);
+        scoreLabel.setVisible(true);
 
         setMinimumSize(getPreferredSize());
-        //setVisible(true);
+
         gameTimer.start();
     }
 
@@ -351,6 +349,8 @@ class GamePanel extends JPanel implements ActionListener {
 
         destroyDestroyed();
 
+        checkForMissedEnemies();
+
     }
 
     private void movement(){
@@ -444,6 +444,7 @@ class GamePanel extends JPanel implements ActionListener {
     }
 
     private boolean canShoot(){
+        //Checks if enough time has passed before firing again
         if(isSpacePressed && fireCounter > 14){
             fireCounter=0;
             return true;
@@ -463,6 +464,7 @@ class GamePanel extends JPanel implements ActionListener {
     }
 
     private boolean canSpawn(){
+        //Compares the counter to the delay to see if a ship is allowed to spawn
         spawnCounter++;
 
         if (spawnCounter < delay){
@@ -521,6 +523,7 @@ class GamePanel extends JPanel implements ActionListener {
     }
 
     private void moveEnemies(){
+        //Update enemyship locations and repaint
         final int OFFSET = 1;
         for(EnemyShip e : enemyShips){
             int y = e.getyPos();
@@ -556,30 +559,43 @@ class GamePanel extends JPanel implements ActionListener {
     }
 
     private void checkForCollisions(){
+        //Runs a collision check for all enemyships against the current projectiles
         Rectangle eS;
         Rectangle pB;
         Rectangle pS;
 
         for (EnemyShip e : enemyShips){
             eS = new Rectangle(e.getxPos(),e.getyPos(),e.getWidth(),e.getHeight());
-            //System.out.println(e.getxPos()+" "+e.getyPos()+" "+e.getWidth()+" "+e.getHeight());
+
             for(ProjectileBlade p : projectileBlades){
                 pB = new Rectangle(p.getxPos(),p.getyPos(),p.getWidth(),p.getHeight());
-                //System.out.println(p.getxPos()+" "+p.getyPos()+" "+p.getWidth()+" "+p.getHeight());
+
                 if (eS.contains(pB)){
-                    System.out.println("Collision Detected");
+                    //System.out.println("Collision Detected");
                     e.setIsDestroyed(true);
                     p.setDestroyed(true);
                     displayHits(pB.getLocation());
+                    SpaceGame.score.increaseScore(1);
+                    //System.out.println(SpaceGame.score.getScoreAsString());
+                    scoreLabel.setText("Score: " + SpaceGame.score.getScoreAsString());
                 }
             }
         }
         
     }
 
+    private void checkForMissedEnemies(){
+        for (EnemyShip e : enemyShips){
+            if (e.getyPos()>1024){
+                System.out.println("Enemy ship escaped");
+                gameOver();
+            }
+        }
+    }
+
     private void displayHits(Point location){
 
-        System.out.println(location);
+        //System.out.println(location);
     }
 
     private void destroyDestroyed(){
@@ -601,6 +617,13 @@ class GamePanel extends JPanel implements ActionListener {
         }
     }
 
+    private void gameOver(){
+        gameTimer.stop();
+        scoreLabel.setText("!!Game Over!!\nYour score was: " + SpaceGame.score.getScoreAsString());
+        SpaceGame.score.compareScore(SpaceGame.score.getScore());
+        SpaceGame.score.saveScores();
+    }
+
     public Dimension getPreferredSize(){
         return new Dimension(1024,1024);
     }
@@ -608,7 +631,7 @@ class GamePanel extends JPanel implements ActionListener {
     public void paintComponent(Graphics g){
         super.paintComponent(g);
         g.drawImage(background,0,0,null);
-        g.drawString("This is my custom Panel",10,20);
+        //SpaceGame.score.paintScore(g);
         playerShip.paintShip(g);
 
         for(EnemyShip e : enemyShips){

@@ -12,65 +12,18 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.awt.*;
 
+// AudioPlayer code courtesy of John Brosnan.
+// File trimmed down to necessary sections.
 
 
-/*You pass in the path to the audio file you wish to play as a String to the static method playAudio()
-  and just call AudioFilePlayer.playAudio() as necessary from whichever class you need to use it from in your
-  project*/
        
-public class AudioFilePlayer extends JFrame implements ActionListener{
+public class AudioFilePlayer extends JFrame{
 	
 	JButton audioButton; //need this global for event-handling later
 
 	static MediaPlayer mediaPlayer; //need to declare this reference globally to prevent garbage collector
 									//from removing it prematurely when play() is called in the playAudio()
 									//method, which would stop playing the clip after a few seconds
-									
-		
-	//some sample audio files I have in a folder called audio that I sent with this Java file  - note that the "audio" folder 
-	//is assumed to be in the same folder as the bytecode AudioFilePlayer.class here so that relative file paths can be used
-	
-	String audioFile1 = "audio/gunshot.wav", audioFile2 = "audio/beep.mp3";
-	
-	//Just a short sample driver for the AudioFilePlayer class to demonstrate how it can be used from other classes
-    
-    public static void main(String args[])
-    { 	
-    	AudioFilePlayer player = new AudioFilePlayer(); //create the AudioFilePlayer GUI
-    	
-        //In order to avoid an "initialization exception" it is necessary to initiate the JavaFX Runtime when the application is started
-        //I am initialising here by creating a "dummy" JFXPanel() object
-        //You MUST add this line of code to your own main() method for your project if you are going to use this class
-        
-        JFXPanel fxPanel = new JFXPanel();            	   	
-    }
-		
-    //a sample GUI constructor to demonstrate the operation of the AudioFilePlayer class
-    //You will never need to call this though in your own applications, you simply need
-    //to call playAudio() on the class as it is a static method
-    
-    public AudioFilePlayer()
-    {
-    	super("AudioFilePlayer Tester");
-    	
-    	FlowLayout flowLayout = new FlowLayout();
-    	
-    	setLayout(flowLayout);
-    	
-    	audioButton = new JButton("Play");
-    	add(audioButton);
-    	
-    	JButton randomButton = new JButton("Generate Random Number");
-    	add(randomButton);
-	
-    	audioButton.addActionListener(this);
-    	randomButton.addActionListener(this);
-    		
-    	setSize(300,200);
-    	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    	
-    	setVisible(true);  	
-    }
        
     
     public static void playAudio(String path)
@@ -115,16 +68,5 @@ public class AudioFilePlayer extends JFrame implements ActionListener{
     	}
 			     
     }
-    
-       	
-    public void actionPerformed(ActionEvent e)
-	{
-		/*If the audioButton was pressed then call playAudio() to play the audio file associated with the reference audioFile1 (the gunshot)
-		  or else, if the other button was pressed, display a message dialog showing a randomly generated number between 1 and 1000*/
-		
-		if(e.getSource()==audioButton)
-			AudioFilePlayer.playAudio(audioFile1);
-		else
-			JOptionPane.showMessageDialog(null,"The randomly generated number was " + (int)(Math.random()*1000 + 1));
-	}   
+
 }
