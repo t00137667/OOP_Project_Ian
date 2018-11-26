@@ -26,7 +26,7 @@ public class SpaceGame extends JComponent {
     }
 
     private static void showGUI(){
-        jFrame = new JFrame("Space Game");
+        jFrame = new JFrame("The Pillars of Oop");
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         jFrame.setMinimumSize(frameDimension);
 
